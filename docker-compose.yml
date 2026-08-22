@@ -41,9 +41,13 @@ services:
     restart: unless-stopped
     environment:
       DOMAIN: ${DOMAIN:?Debes definir DOMAIN en el archivo .env (ej: learndhub.com)}
-    ports:
-      - "80:80"
-      - "443:443"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=learnhub-proxy"
+      - "traefik.http.routers.learndhub.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.learndhub.entrypoints=websecure"
+      - "traefik.http.routers.learndhub.tls.certresolver=le"
+      - "traefik.http.services.learndhub.loadbalancer.server.port=80"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - ./frontend:/srv/frontend:ro
@@ -53,9 +57,13 @@ services:
       - api
     networks:
       - learndhub
+      - learnhub-proxy
 
 networks:
-  learndhub:
+ learndhub:
+ learnhub-proxy:
+   external: true
+  
 
 volumes:
   pgdata:
