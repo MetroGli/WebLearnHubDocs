@@ -5,7 +5,7 @@ services:
     environment:
       POSTGRES_DB: ${DB_NAME:-learndhub}
       POSTGRES_USER: ${DB_USER:-learndhub}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:?Debes definir DB_PASSWORD en el archivo .env}
+      POSTGRES_PASSWORD: "${DB_PASSWORD:?Debes definir DB_PASSWORD en el archivo .env}"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -26,7 +26,7 @@ services:
       DB_PORT: 5432
       DB_NAME: ${DB_NAME:-learndhub}
       DB_USER: ${DB_USER:-learndhub}
-      DB_PASSWORD: ${DB_PASSWORD:?Debes definir DB_PASSWORD en el archivo .env}
+      DB_PASSWORD: "${DB_PASSWORD:?Debes definir DB_PASSWORD en el archivo .env}"
       LEARNDHUB_STORAGE_DIR: /app/storage
     volumes:
       - storage_data:/app/storage
@@ -40,7 +40,7 @@ services:
     image: caddy:2-alpine
     restart: unless-stopped
     environment:
-      DOMAIN: ${DOMAIN:?Debes definir DOMAIN en el archivo .env (ej: learndhub.com)}
+      DOMAIN: "${DOMAIN:?Debes definir DOMAIN en el archivo .env, ej. learndhub.com}"
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=learnhub-proxy"
@@ -60,10 +60,9 @@ services:
       - learnhub-proxy
 
 networks:
- learndhub:
- learnhub-proxy:
-   external: true
-  
+  learndhub:
+  learnhub-proxy:
+    external: true
 
 volumes:
   pgdata:
