@@ -10,7 +10,7 @@ COPY src ./src
 RUN mvn -B clean package -DskipTests
 
 # ===== Etapa 2: imagen final =====
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:17-jre-ubi9-minimal
 WORKDIR /app
 
 # Usuario sin privilegios
