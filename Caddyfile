@@ -1,0 +1,14 @@
+{$DOMAIN} {
+	# Todo lo que empiece con /api/ se envía al backend Spring Boot
+	handle /api/* {
+		reverse_proxy api:8080
+	}
+
+	# El resto (HTML/CSS/JS/imágenes) se sirve como sitio estático
+	handle {
+		root * /srv/frontend
+		file_server
+	}
+
+	encode gzip
+}

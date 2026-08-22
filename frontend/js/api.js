@@ -1,5 +1,9 @@
 const API = (() => {
-  const BASE_URL = 'http://localhost:8080/api';
+  // En local (Live Server / python -m http.server) apunta directo al backend
+  // en el puerto 8080. En producción, el frontend se sirve detrás del mismo
+  // dominio que la API (proxy inverso), así que se usa una ruta relativa.
+  const esLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+  const BASE_URL = esLocal ? 'http://localhost:8080/api' : `${window.location.origin}/api`;
 
   async function listarPorFase(fase, tipo = 'DOCUMENTO') {
     const res = await fetch(`${BASE_URL}/documentos?fase=${fase}&tipo=${tipo}`);

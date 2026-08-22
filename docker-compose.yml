@@ -1,0 +1,64 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-learndhub}
+      POSTGRES_USER: ${DB_USER:-learndhub}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Debes definir DB_PASSWORD en el archivo .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-learndhub} -d ${DB_NAME:-learndhub}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - learndhub
+
+  api:
+    build:
+      context: ./backend/learndhub-api
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-learndhub}
+      DB_USER: ${DB_USER:-learndhub}
+      DB_PASSWORD: ${DB_PASSWORD:?Debes definir DB_PASSWORD en el archivo .env}
+      LEARNDHUB_STORAGE_DIR: /app/storage
+    volumes:
+      - storage_data:/app/storage
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - learndhub
+
+  web:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN:?Debes definir DOMAIN en el archivo .env (ej: learndhub.com)}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./frontend:/srv/frontend:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - api
+    networks:
+      - learndhub
+
+networks:
+  learndhub:
+
+volumes:
+  pgdata:
+  storage_data:
+  caddy_data:
+  caddy_config:

@@ -19,7 +19,7 @@ public record DocumentoDTO(
     public static DocumentoDTO desde(Documento d) {
         return new DocumentoDTO(
                 d.getId(),
-                d.getFase().name(),
+                d.getFase() != null ? d.getFase().name() : null,
                 d.getTipo().name(),
                 d.getNombreOriginal(),
                 d.getNombreDocumento(),
