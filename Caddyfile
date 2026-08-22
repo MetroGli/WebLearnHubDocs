@@ -1,4 +1,4 @@
-{$DOMAIN} {
+http://{$DOMAIN} {
 	# Todo lo que empiece con /api/ se envía al backend Spring Boot
 	handle /api/* {
 		reverse_proxy api:8080
