@@ -10,11 +10,11 @@ COPY src ./src
 RUN mvn -B clean package -DskipTests
 
 # ===== Etapa 2: imagen final =====
-FROM eclipse-temurin:17-jre-ubi9-minimal
+FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
 
 # Usuario sin privilegios
-RUN addgroup -S learndhub && adduser -S learndhub -G learndhub
+RUN groupadd -r learndhub && useradd -r -g learndhub learndhub
 COPY --from=build /build/target/learndhub-api-*.jar app.jar
 RUN mkdir -p /app/storage && chown -R learndhub:learndhub /app
 USER learndhub
